@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta
+  name="viewport"
+  content="initial-scale=1,maximum-scale=1,user-scalable=no"
+  />
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+  <link
+  href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+  rel="stylesheet"
+  />
+  <style>
+    html,
+    body,
+    #map {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      color: #323232;
+    }
+    #features {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 30%;
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    #map canvas {
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <pre id="features"></pre>
+  <script>
+    
+    // Display an ArcGIS basemap layer
+    const apiKey =
+    "AAPK6cbdc85be8b94adebb566e79b6c4e9811Hc6HYPSEW85HJ8Sb4HAgEQjrD2_fkDIP5wkgu4hSXfZmkqV50uIzxoMc9_uGgHf";
+    
+    const url = new URL(window.location.href);
+    let basemapEnum = url.searchParams.get("id");
+    basemapEnum = basemapEnum? basemapEnum : "ArcGIS:Navigation";
+    
+    let center = url.searchParams.get("center");
+    center = center? center : "-122.675,45.5051";
+    center = center.split(",");
+    
+    let zoom = url.searchParams.get("zoom");
+    zoom = zoom? zoom : "12";
+
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/${basemapEnum}?type=style&apiKey=${apiKey}&t=${Math.random()}`,
+      zoom: parseInt(zoom),
+      center: [parseFloat(center[0]), parseFloat(center[1])],
+    });
+    
+    // Code from: https://docs.mapbox.com/mapbox-gl-js/example/queryrenderedfeatures/
+    map.on("mousemove", (e) => {
+      const features = map.queryRenderedFeatures(e.point);
+      
+      // Limit the number of properties we're displaying for
+      // legibility and performance
+      const displayProperties = [
+        'type',
+        'properties',
+        'id',
+        'layer',
+        'source',
+        'sourceLayer',
+        'state'
+      ];
+      
+      const displayFeatures = features.map((feat) => {
+        const displayFeat = {};
+        displayProperties.forEach((prop) => {
+          displayFeat[prop] = feat[prop];
+        });
+        return displayFeat;
+      });
+      
+      // Write object as string with an indent of two spaces.
+      document.getElementById('features').innerHTML = JSON.stringify(
+        displayFeatures,
+        null,
+        2
+      );
+    });
+
+    // map.on('load', function() {
+    //   map.addSource("esri2", {
+    //     type: "vector",
+    //     tiles: [
+    //     "https://basemaps.arcgis.com/arcgis/rest/services/OpenStreetMap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf",
+    //     ],
+    //   });
+    // });
+    //const selectedLayers = [
+    // "road (bridge)/motorway/casing",
+    // "road (bridge)/motorway/line",
+    // "water area/water"
+    // ]
+    // fetch('style.json')
+    // .then((response) => response.json())
+    // .then((data) => {
+    //   let layers = data;
+    //   selectedLayers.forEach(layerId =>{
+    //     let auxLayer = layers.layers.find(l => l.id === layerId);
+    //     auxLayer.id += "2";
+        
+    //     console.log("Adding layer =",auxLayer)
+    //     map.addLayer(auxLayer);
+        
+    //     map.on("click", auxLayer.id, (e) => {
+    //       // map.getCanvas().style.cursor = "pointer";
+    //       if(e.features){
+    //         // debugger
+    //         const feature = e.features[0];
+    //         // console.log("Feature=",feature)
+    //         const relatedFeatures = map.querySourceFeatures(feature.layer.source
+    //         , {
+    //           sourceLayer: feature.layer["source-layer"],
+    //           // filter: ["in", "Common", feature.properties.Common],
+    //         }
+    //         );
+            
+    //         relatedFeatures.forEach(e => {
+    //           console.log(e.properties);
+    //         });
+            
+    //       }else{
+    //         console.log("No features")
+    //       }      
+    //     });
+    //   }); 
+    // });
+  </script>
+</body>
+</html>

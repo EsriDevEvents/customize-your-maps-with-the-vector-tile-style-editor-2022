@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <script src="dist/module.js"></script>
+    <script src="jsonview.js"></script>
+    <style>
+      .container{
+        width: 80%;
+        margin: auto;
+      }
+    </style>
+    <script>
+      const defaultPbf = 'https://vectortileservices3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Median_income_by_commune_france_vector_tile/VectorTileServer/tile/5/11/15.pbf';
+      
+      const url = new URL(window.location.href);
+      let pbfUrl = url.searchParams.get("url");
+      pbfUrl = pbfUrl? pbfUrl : defaultPbf;
+
+      module.decodePbf(pbfUrl).then(res => {
+        console.log("res = ", res);
+        debugger
+        const tree = jsonview.create(res);
+        jsonview.render(tree, document.querySelector('#vt-response'));
+        jsonview.expand(tree);
+      });
+    </script>
+  </head>
+<body>
+  <div class="container">
+    <h1>Vector tile PBF decoder</h1>
+    <p>To decode a different PBF introduce an URL:<form type="GET" action="."><input type="text" name="url"><input type="submit" value="Decode"></form></p>
+    <p>
+      <small>
+        Try for example this url: https://vectortileservices.arcgis.com/Q6ZFRRvMTlsTTFuP/arcgis/rest/services/Festival_vector_layer/VectorTileServer/tile/0/0/0.pbf
+        (from <a href="https://www.arcgis.com/apps/mapviewer/index.html?url=https://vectortileservices.arcgis.com/Q6ZFRRvMTlsTTFuP/arcgis/rest/services/Festival_vector_layer/VectorTileServer&center=-2.654446,38.545180&level=7">this Vector layer</a>)
+      </small>
+    </p>
+    <hr>
+    <h2>Response</h2>
+    <p><strong>Important:</strong> Depending on the amount of data encoded in the PBF, formatting it can take time, so be patience. Optionally you can reload and explore the response in the browser console.</p>
+    <pre id="vt-response">
+    </pre>
+  </div>
+</body>
+</html>

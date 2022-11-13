@@ -1,0 +1,62 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>VectorTileLayer | Sample | ArcGIS API for JavaScript 4.25</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.25/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.25/"></script>
+
+    <script>
+      var view
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/VectorTileLayer"
+      ], (Map, MapView, VectorTileLayer) => {
+        // Create a Map
+        const map = new Map({
+          basemap: "streets-navigation-vector"
+        });
+
+        // Make map view and bind it to the map
+        view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [-2.654446, 38.545180],
+          zoom: 7
+        });
+
+        /********************************************************************
+         * Add a vector tile layer to the map
+         *
+         * The url must point to the style or the vector tile service
+         *********************************************************************/
+        const tileLayer = new VectorTileLayer({
+          url: "https://hhkaos2.maps.arcgis.com/sharing/rest/content/items/f95e324855624dc49dc251eeeea28c2f/resources/styles/root.json"
+        });
+        map.add(tileLayer);
+      });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>

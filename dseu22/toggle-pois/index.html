@@ -1,0 +1,260 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>VectorTileLayer | Sample | ArcGIS API for JavaScript 4.18</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #topbar {
+        padding: 10px;
+        width: 190px;
+      }
+      .style-button{
+        margin: 3px;
+      }
+      span:not(.visible) [icon="view-visible"]{
+        display: none;
+      }
+      span.visible [icon="view-hide"]{
+        display: none;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.25/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.25/"></script>
+
+    <script>
+      var view
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/VectorTileLayer"
+      ], (Map, MapView, VectorTileLayer) => {
+        // Create a Map
+        const map = new Map();
+
+        // Make map view and bind it to the map
+         view = new MapView({
+          container: "viewDiv",
+          map: map,
+          center: [
+          13.392557502560374,
+          52.51536475440781
+],
+          zoom: 15
+        });
+
+        // OSM streets style
+        const layer = new VectorTileLayer({
+          url: "https://www.arcgis.com/sharing/rest/content/items/f455d84d5aab4d64b1191e0d2eed42b1/resources/styles/root.json?f=pjson"
+        });
+        map.add(layer);
+        view.ui.add("topbar", "top-right");
+
+        let isVisible = false;
+        let visibleValue = "visible";
+        let layerVisibility = {}
+        let toggleLayers = {
+          "leisure": [
+            "amenity point/theatre",
+            "amenity area/theatre",
+            "amenity point/museum",
+            "amenity point/monument",
+            "amenity point/arts centre",
+            "amenity area/arts centre",
+            "amenity point/fitness"
+          ],
+          "coffee-shops": [
+            "amenity point/cafe"
+          ],
+          "restaurants": [
+            "amenity point/fast food",
+            "amenity point/restaurant",
+            "amenity point/ice cream"
+          ],
+          "night-life": [
+            "amenity point/pub",
+            "amenity point/bar",
+            "amenity point/nightclub",
+          ],
+          "basic-services": [
+            "amenity point/pharmacy",
+            "amenity point/police",
+            "amenity point/bank",
+            "amenity area/bank",
+            "amenity point/bus stop",
+            "amenity point/taxi",
+            "railway station point",
+            "amenity point/parking",
+            "amenity point/charging station",
+            "amenity area/bicycle rental"
+          ],
+          "hotel":[
+            "amenity point/hotel"
+          ],
+          "shopping":[
+            "shop point/clothes",
+            "shop point/department store"
+          ],
+          "other": [
+            "place of worship area/Christian",
+            "place of worship area/Christian - other",
+            "amenity point/medium office",
+            "amenity point/library",
+            "amenity area/library",
+            "amenity point/clinic"
+          ],
+          "address":[
+            "OSM address point/Number/Name"
+          ]
+        };
+
+        // toggle visibility country names symbol layer
+        document
+          .querySelectorAll(".toggleVisibility").forEach(e=>{
+            e.addEventListener("click", (e) => {
+              const type = e.target.getAttribute("data-type")
+              layerVisibility[type] = layerVisibility[type]? layerVisibility[type]:false;
+              layerVisibility[type] = !layerVisibility[type];
+              visibleValue = layerVisibility[type] ? "none" : "visible";
+              e.target.querySelector('span').classList.toggle("visible");
+              
+              toggleLayers[type].forEach((layerName) => {
+                console.log("hide: ",layerName);
+                layer.setStyleLayerVisibility(layerName, visibleValue);
+              });
+            });
+          })
+          
+      });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <div id="topbar" class="esri-widget">
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        type="button"
+        data-type="coffee-shops"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Coffee shops
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="restaurants"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Restaurants
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="basic-services"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Basic services
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="night-life"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Night life
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="leisure"
+      >
+      <span class="visible">
+        <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+        <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+      </span>
+        Leisure
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="hotel"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Hotel
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="shopping"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Shopping
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="address"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Address points
+      </button>
+      <button
+        class="esri-button style-button toggleVisibility visible"
+        id="toggleVisibility"
+        type="button"
+        data-type="other"
+      >
+        <span class="visible">
+          <calcite-icon icon="view-visible" scale="s"></calcite-icon>
+          <calcite-icon icon="view-hide" scale="s"></calcite-icon>
+        </span>
+        Other
+      </button>
+      
+    </div>
+  </body>
+</html>
